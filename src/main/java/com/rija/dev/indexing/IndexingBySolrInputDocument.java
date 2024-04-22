@@ -18,12 +18,12 @@ public class IndexingBySolrInputDocument {
 
     public static void main(String[] args) {
         List<SolrInputDocument> docs = buildSolrInputDocuments();
-        LOGGER.info("Indexing {} articles...\n", docs.size());
+        LOGGER.info("Indexing {} articles...", docs.size());
 
         try {
             SOLR_CLIENT.add(docs);
             SOLR_CLIENT.commit();
-            LOGGER.info("{} articles indexed.\n", docs.size());
+            LOGGER.info("{} articles indexed", docs.size());
         } catch (SolrServerException | IOException e) {
             LOGGER.error("Failed to indexing articles: {}", e.getMessage());
         }
