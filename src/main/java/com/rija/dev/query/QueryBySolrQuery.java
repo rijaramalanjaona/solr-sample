@@ -1,0 +1,37 @@
+package com.rija.dev.query;
+
+import com.rija.dev.utils.SolrUtils;
+import org.apache.solr.client.solrj.SolrClient;
+import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.response.QueryResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+
+public class QueryBySolrQuery {
+    private static final Logger LOGGER = LoggerFactory.getLogger(QueryBySolrQuery.class);
+    private static final SolrClient SOLR_CLIENT = SolrUtils.getSolrClient();
+
+    public static void main(String[] args) {
+        final SolrQuery solrQuery = new SolrQuery("author: \"Kevin Yang\"");
+        solrQuery.addField("id");
+        solrQuery.addField("title");
+        solrQuery.addField("author");
+        solrQuery.setSort("id", SolrQuery.ORDER.asc);
+        solrQuery.setRows(2);
+
+        QueryResponse response = null;
+        try {
+            response = SOLR_CLIENT.query(solrQuery);
+        } catch (SolrServerException | IOException e) {
+            LOGGER.error("Failed to search articles: {}", e.getMessage());
+        }
+
+        if (response != null) {
+            LOGGER.info("Found {} articles", response.getResults().getNumFound());
+            response.getResults().forEach(article -> LOGGER.info(article.toString()));
+        }
+    }
+}
